@@ -19,13 +19,13 @@ public class Game {
 
     public static void main(String[] args) {
         Game game = new Game();
-        dislayWelcomeMessage();
+        displayWelcomeMessage();
         game.initialDeal();
         game.play();
         System.out.println(ansi().reset());
     }
 
-    private static void dislayWelcomeMessage() {
+    private static void displayWelcomeMessage() {
         System.out.println(ansi()
                                    .bgBright(Ansi.Color.WHITE)
                                    .eraseScreen()
@@ -42,17 +42,19 @@ public class Game {
     public void initialDeal() {
 
         // deal first round of cards, players first
-        playerHand.add(deck.draw());
-        dealerHand.add(deck.draw());
-
+        dealRound();
         // deal next round of cards
+        dealRound();
+    }
+
+    private void dealRound() {
         playerHand.add(deck.draw());
         dealerHand.add(deck.draw());
     }
 
     public void play() {
         // get Player's decision: hit until they stand, then they're done (or they go bust)
-        boolean playerBusted = playerMove(false);
+        boolean playerBusted = playerMove();
         // Dealer makes its choice automatically based on a simple heuristic (<=16, hit, 17>=stand)
         dealerMove(playerBusted);
         displayFinalGameState();
@@ -62,7 +64,7 @@ public class Game {
     private void displayGameResult(boolean playerBusted) {
         if (playerBusted) {
             System.out.println("You Busted, so you lose.  💸");
-        } else if (handValueOf(dealerHand) > 21) {
+        } else if (isBustedHandValue(dealerHand)) {
             System.out.println("Dealer went BUST, Player wins! Yay for you!! 💵");
         } else if (handValueOf(dealerHand) < handValueOf(playerHand)) {
             System.out.println("You beat the Dealer! 💵");
@@ -79,19 +81,19 @@ public class Game {
                 dealerHand.add(deck.draw());
             }
         }
-
     }
 
-    private boolean playerMove(boolean playerBusted) {
+    private boolean playerMove() {
+        boolean playerBusted = false;
         while (!playerBusted) {
             displayGameState();
             String playerChoice = inputFromPlayer().toLowerCase();
-            if (playerChoice.startsWith("s")) {
+            if (playerStays(playerChoice)) {
                 break;
             }
-            if (playerChoice.startsWith("h")) {
+            if (playerHits(playerChoice)) {
                 playerHand.add(deck.draw());
-                if (handValueOf(playerHand) > 21) {
+                if (isBustedHandValue(playerHand)) {
                     playerBusted = true;
                 }
             } else {
@@ -99,6 +101,18 @@ public class Game {
             }
         }
         return playerBusted;
+    }
+
+    private boolean isBustedHandValue(List<Card> hand) {
+        return handValueOf(hand) > 21;
+    }
+
+    private boolean playerHits(String playerChoice) {
+        return playerChoice.startsWith("h");
+    }
+
+    private boolean playerStays(String playerChoice) {
+        return playerChoice.startsWith("s");
     }
 
     public int handValueOf(List<Card> hand) {
