@@ -9,7 +9,7 @@ class CardTest {
 
     @Test
     public void withNumberCardHasNumericValueOfTheNumber() throws Exception {
-        Card card = new Card("don't care", "7");
+        Card card = new Card(Card.Suit.DIAMONDS, "7");
 
         assertThat(card.rankValue())
                 .isEqualTo(7);
@@ -17,7 +17,7 @@ class CardTest {
 
     @Test
     public void withValueOfQueenHasNumericValueOf10() throws Exception {
-        Card card = new Card("don't care", "Q");
+        Card card = new Card(Card.Suit.DIAMONDS, "Q");
 
         assertThat(card.rankValue())
                 .isEqualTo(10);
@@ -25,7 +25,7 @@ class CardTest {
 
     @Test
     public void withAceHasNumericValueOf1() throws Exception {
-        Card card = new Card("don't care", "A");
+        Card card = new Card(Card.Suit.DIAMONDS, "A");
 
         assertThat(card.rankValue())
                 .isEqualTo(1);
@@ -34,8 +34,8 @@ class CardTest {
     @Test
     public void suitOfHeartsOrDiamondsIsDisplayedInRed() throws Exception {
         // given a card with Hearts or Diamonds
-        Card heartsCard = new Card("♥", "10");
-        Card diamondsCard = new Card("♦", "8");
+        Card heartsCard = new Card(Card.Suit.HEARTS, "10");
+        Card diamondsCard = new Card(Card.Suit.DIAMONDS, "8");
 
         // when we ask for its display representation
         String ansiRedString = ansi().fgRed().toString();
@@ -45,6 +45,14 @@ class CardTest {
                 .contains(ansiRedString);
         assertThat(diamondsCard.display())
                 .contains(ansiRedString);
+    }
+
+    @Test
+    public void cardDisplaysSuitAsSymbol() throws Exception {
+        Card spadesCard = new Card(Card.Suit.SPADES, "9");
+
+        assertThat(spadesCard.display())
+                .contains("│    ♠    │");
     }
 
 }
