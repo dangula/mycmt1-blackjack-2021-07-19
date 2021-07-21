@@ -18,6 +18,15 @@ public class Card {
             this.symbol = symbol;
         }
 
+        public static Suit fromSymbol(String symbol) {
+            for(Suit suit : Suit.values()) {
+                if (suit.symbol.equals(symbol)) {
+                    return suit;
+                }
+            }
+            return Suit.CLUBS;
+        }
+
         @Override public String toString() {
             return this.symbol;
         }
@@ -26,6 +35,9 @@ public class Card {
     private final Suit suit;
     private final String rank;
 
+    public Card(String suit, String rank) {
+        this(Suit.fromSymbol(suit), rank);
+    }
 
     public Card(Suit suit, String rank) {
         this.suit = suit;
@@ -47,7 +59,7 @@ public class Card {
         lines[0] = "┌─────────┐";
         lines[1] = String.format("│%s%s       │", rank, rank.equals("10") ? "" : " ");
         lines[2] = "│         │";
-        lines[3] = String.format("│    %s    │", suit.toString());
+        lines[3] = String.format("│    %s    │", suit.symbol);
         lines[4] = "│         │";
         lines[5] = String.format("│       %s%s│", rank.equals("10") ? "" : " ", rank);
         lines[6] = "└─────────┘";
